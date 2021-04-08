@@ -35,7 +35,10 @@ public class TestPUN : MonoBehaviourPunCallbacks {
 
     public override void OnJoinedRoom() {
         Debug.Log("==JOINED ROOM==");
+        OnProperJoin();
     }
+
+    protected virtual void OnProperJoin() { }
 
     public override void OnJoinRandomFailed(short returnCode, string message) {
         Debug.Log($"return code: {returnCode}, message: {message}");
