@@ -22,13 +22,12 @@ public class NetPlayer : TestPUN {
     }
 
     protected override void OnProperJoin() {
-        GameObject playerBall =
-            PhotonNetwork.Instantiate("Cylinder", new Vector3(0f, 1f, 0f), Quaternion.identity, 0);
+        PhotonNetwork.Instantiate("Player", Vector3.zero, Quaternion.identity);
 
         netPlayerID = PhotonNetwork.PlayerList.Length;
         Debug.Log(netPlayerID);
         if (netPlayerID == 1) {
-            PhotonNetwork.Instantiate("Pellet", new Vector3(1f, 1f, 1f), Quaternion.identity, 0);
+            PhotonNetwork.Instantiate("Pellet", new Vector3(1f, 0f, 1f), Quaternion.identity);
             //     for (int i = 0; i < 100; ++i) {
             //         GameObject newCube = PhotonNetwork.Instantiate("Cube",
             //             new Vector3(-32.5f + ((i % 10) * 7.5f), 0, 8.7f + 32.5f - ((i / 10) * 7.5f)), Quaternion.identity,
