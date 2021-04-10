@@ -3,26 +3,9 @@ using Photon.Pun;
 
 public class NetPlayer : TestPUN {
     public int netPlayerID;
-    public Camera playerCam;
-
-    void FixedUpdate() {
-        // RaycastHit hit;
-        // Ray ray = playerCam.ScreenPointToRay(Input.mousePosition);
-        //
-        // if (InputManager.mouse.mouse1.isHit) {
-        //     if (Physics.Raycast(ray, out hit)) {
-        //         if (hit.transform.name == "BilliardSphere(Clone)" && hit.transform.GetComponent<PhotonView>().IsMine) {
-        //             hit.transform.gameObject.GetComponent<Rigidbody>()
-        //                 .AddForceAtPosition(-hit.normal * 1000.0f, hit.point);
-        //         }
-        //
-        //         // Do something with the object that was hit by the raycast.
-        //     }
-        // }
-    }
 
     protected override void OnProperJoin() {
-        PhotonNetwork.Instantiate("Player", Vector3.zero, Quaternion.identity);
+        PhotonNetwork.Instantiate("Player", new Vector3(0f, 0f, 2f), Quaternion.identity);
 
         netPlayerID = PhotonNetwork.PlayerList.Length;
         Debug.Log(netPlayerID);
