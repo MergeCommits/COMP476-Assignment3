@@ -68,4 +68,12 @@ public class PacMan : MonoBehaviour {
             
         return results[0] == null;
     }
+
+    public void Teleport(Vector2 newPosition) {
+        Vector3 position = transform.position;
+        
+        position = (position.XZ() + newPosition).ToXZ();
+        transform.position = position;
+        movePosition = position.XZ();
+    }
 }
