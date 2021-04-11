@@ -6,12 +6,12 @@ public class NetPlayer : TestPUN {
     public int netPlayerID;
 
     protected override void OnProperJoin() {
-        PhotonNetwork.Instantiate("Player", new Vector3(0f, 0f, 2f), Quaternion.identity);
-
         netPlayerID = PhotonNetwork.PlayerList.Length;
         Debug.Log(netPlayerID);
 
         IEnumerable<Vector2> pelletPositions = ClearPelletsAndReturnPositions();
+        
+        PhotonNetwork.Instantiate("Player", new Vector3(0f, 0f, 2f), Quaternion.identity);
         
         if (netPlayerID == 1) {
             GeneratePellets(pelletPositions);
@@ -23,7 +23,7 @@ public class NetPlayer : TestPUN {
         Vector2[] result = new Vector2[pellets.Length];
         for (int i = 0; i < pellets.Length; i++) {
             Vector2 coord = pellets[i].transform.position.XZ();
-            Destroy(pellets[i].gameObject);
+            DestroyImmediate(pellets[i].gameObject);
             result[i] = coord;
         }
 

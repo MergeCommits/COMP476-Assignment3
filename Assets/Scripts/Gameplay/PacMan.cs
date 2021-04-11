@@ -1,4 +1,5 @@
 ﻿using Photon.Pun;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -89,14 +90,18 @@ public class PacMan : MonoBehaviour {
     
     private static void FigureOutWinner() {
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-        PacMan player1 = players[0].GetComponent<PacMan>();
-        PacMan player2 = players[1].GetComponent<PacMan>();
-        if (player1.score > player2.score) {
-            player1.Winner();
-            player2.Loser();
-        } else {
-            player1.Loser();
-            player2.Winner();
+
+        PacMan winner = players
+            .Select(go => go.GetComponent<PacMan>())
+            .OrderByDescending(p => p.score)
+            .First();
+        
+        winner.Winner();
+        foreach (GameObject loser in players) {
+            PacMan pac = loser.GetComponent<PacMan>();
+            if (pac == winner) { continue; }
+            
+            pac.Loser();
         }
     }
 
@@ -121,6 +126,8 @@ public class PacMan : MonoBehaviour {
     }
 
     public void Teleport(Vector2 newPosition) {
+        if (!photonView.IsMine) { return; }
+        
         Vector3 position = transform.position;
         
         position = (position.XZ() + newPosition).ToXZ();
