@@ -1,8 +1,6 @@
 ﻿using Photon.Pun;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PacMan : MonoBehaviour {
     private PhotonView photonView;
@@ -12,12 +10,17 @@ public class PacMan : MonoBehaviour {
     private Vector2 movePosition;
     private float moveSpeed = 8f;
     
+    private int score;
+    private Text scoreText;
+    
     private void Awake() {
         photonView = GetComponent<PhotonView>();
         
         collision = LayerMask.GetMask("Wall");
 
         movePosition = transform.position.XZ();
+
+        scoreText = GameObject.Find("/Canvas/Text").GetComponent<Text>();
     }
 
     void FixedUpdate() {
@@ -41,17 +44,9 @@ public class PacMan : MonoBehaviour {
         }
 
         if (!Mathf.Approximately(InputManager.movement.axisDelta.x, 0f)) {
-            if (InputManager.movement.axisDelta.x > 0f) {
-                AttemptMove(new Vector2(1f, 0f));
-            } else {
-                AttemptMove(new Vector2(-1f, 0f));
-            }
+            AttemptMove(new Vector2(InputManager.movement.axisDelta.x, 0f));
         } else if (!Mathf.Approximately(InputManager.movement.axisDelta.y, 0f)) {
-            if (InputManager.movement.axisDelta.y > 0f) {
-                AttemptMove(new Vector2(0f, 1f));
-            } else {
-                AttemptMove(new Vector2(0f, -1f));
-            }
+            AttemptMove(new Vector2(0f, InputManager.movement.axisDelta.y));
         }
     }
 
@@ -67,6 +62,62 @@ public class PacMan : MonoBehaviour {
         Physics.OverlapSphereNonAlloc(newPosition.ToXZ(), 0.4f, results, collision.value);
             
         return results[0] == null;
+    }
+
+    public void AtePellet() {
+        photonView.RPC("UpdatePelletCount", RpcTarget.All);
+    }
+
+    [PunRPC]
+    private void UpdatePelletCount() {
+        score++;
+        if (photonView.IsMine) {
+            scoreText.text = "Score: " + score;
+        }
+
+        if (PhotonNetwork.IsMasterClient) {
+            CheckIfAllPelletsEaten();
+        }
+    }
+
+    private void CheckIfAllPelletsEaten() {
+        GameObject[] pellets = GameObject.FindGameObjectsWithTag("Pellet");
+        if (pellets.Length < 2) { // Last one's still alive at this moment.
+            FigureOutWinner();
+        }
+    }
+    
+    private static void FigureOutWinner() {
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        PacMan player1 = players[0].GetComponent<PacMan>();
+        PacMan player2 = players[1].GetComponent<PacMan>();
+        if (player1.score > player2.score) {
+            player1.Winner();
+            player2.Loser();
+        } else {
+            player1.Loser();
+            player2.Winner();
+        }
+    }
+
+    [PunRPC]
+    private void Winner() {
+        if (photonView.IsMine) {
+            scoreText.alignment = TextAnchor.MiddleCenter;
+            scoreText.text = "You Win";
+        } else {
+            photonView.RPC("Winner", RpcTarget.Others);
+        }
+    }
+
+    [PunRPC]
+    private void Loser() {
+        if (photonView.IsMine) {
+            scoreText.alignment = TextAnchor.MiddleCenter;
+            scoreText.text = "You Lose";
+        } else {
+            photonView.RPC("Loser", RpcTarget.Others);
+        }
     }
 
     public void Teleport(Vector2 newPosition) {
