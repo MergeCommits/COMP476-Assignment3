@@ -17,6 +17,9 @@ public class PacMan : MonoBehaviour {
     private const float POWER_PELLET_TIME = 5f;
     private const float SPEED_BOOST = 3f;
     private float powerPelletTimeRemaining;
+
+    private AudioClip coin;
+    private AudioSource audioSource;
     
     private void Awake() {
         photonView = GetComponent<PhotonView>();
@@ -26,6 +29,9 @@ public class PacMan : MonoBehaviour {
         movePosition = transform.position.XZ();
 
         scoreText = GameObject.Find("/Canvas/Text").GetComponent<Text>();
+        
+        coin =  Resources.Load<AudioClip>("sm64_coin");
+        audioSource = GetComponent<AudioSource>();
     }
 
     void FixedUpdate() {
@@ -100,6 +106,8 @@ public class PacMan : MonoBehaviour {
         score++;
         if (photonView.IsMine) {
             scoreText.text = "Score: " + score;
+            audioSource.PlayOneShot(coin);
+            
         }
 
         if (PhotonNetwork.IsMasterClient) {
