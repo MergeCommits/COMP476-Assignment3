@@ -12,7 +12,7 @@ public class NetPlayer : TestPUN {
         IEnumerable<Vector2> pelletPositions = ClearPelletsAndReturnPositions();
         IEnumerable<Vector2> powerPelletPositions = ClearPowerPelletsAndReturnPositions();
         
-        PhotonNetwork.Instantiate("Player", new Vector3(0f, 0f, 2f), Quaternion.identity);
+        PhotonNetwork.Instantiate("Player", new Vector3(0f, 0f, -4f), Quaternion.identity);
         
         if (netPlayerID == 1) {
             GeneratePellets(pelletPositions, powerPelletPositions);
