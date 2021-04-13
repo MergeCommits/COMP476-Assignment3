@@ -14,6 +14,10 @@ public class PacMan : MonoBehaviour {
     private int score;
     private Text scoreText;
     
+    private const float POWER_PELLET_TIME = 5f;
+    private const float SPEED_BOOST = 3f;
+    private float powerPelletTimeRemaining;
+    
     private void Awake() {
         photonView = GetComponent<PhotonView>();
         
@@ -27,6 +31,11 @@ public class PacMan : MonoBehaviour {
     void FixedUpdate() {
         if (photonView.IsMine) {
             float speed = 1.5f;
+            if (powerPelletTimeRemaining > 0f) {
+                powerPelletTimeRemaining -= Time.deltaTime;
+                speed *= SPEED_BOOST;
+            } 
+            
             Vector2 direction = new Vector2(InputManager.movement.axisDelta.x, InputManager.movement.axisDelta.y);
             direction = Vector2.ClampMagnitude(direction, 1.0f);
 
@@ -63,6 +72,15 @@ public class PacMan : MonoBehaviour {
         Physics.OverlapSphereNonAlloc(newPosition.ToXZ(), 0.4f, results, collision.value);
             
         return results[0] == null;
+    }
+
+    [PunRPC]
+    public void AtePowerPellet() {
+        if (photonView.IsMine) {
+            powerPelletTimeRemaining = POWER_PELLET_TIME;
+        } else {
+            photonView.RPC("AtePowerPellet", RpcTarget.Others);
+        }
     }
 
     public void AtePellet() {

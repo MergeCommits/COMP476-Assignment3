@@ -1,13 +1,13 @@
 using Photon.Pun;
 using UnityEngine;
 
-public class Pellet : MonoBehaviour {
+public class PowerPellet : MonoBehaviour {
     private void OnTriggerEnter(Collider other) {
         if (!PhotonNetwork.IsMasterClient) { return; }
         if (!other.CompareTag("Player")) { return; }
 
         PacMan player = other.GetComponent<PacMan>();
-        player.AtePellet();
+        player.AtePowerPellet();
             
         PhotonNetwork.Destroy(this.gameObject);
     }
