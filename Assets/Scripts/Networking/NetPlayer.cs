@@ -1,5 +1,6 @@
 using UnityEngine;
 using Photon.Pun;
+using System.Collections;
 using System.Collections.Generic;
 
 public class NetPlayer : TestPUN {
@@ -16,6 +17,7 @@ public class NetPlayer : TestPUN {
         
         if (netPlayerID == 1) {
             GeneratePellets(pelletPositions, powerPelletPositions);
+            StartCoroutine(GenerateGhosts());
         }
     }
 
@@ -50,6 +52,14 @@ public class NetPlayer : TestPUN {
 
         foreach (Vector2 powerPelletPosition in powerPelletPositions) {
             PhotonNetwork.Instantiate("PowerPellet", powerPelletPosition.ToXZ(), Quaternion.identity);
+        }
+    }
+
+    private static IEnumerator GenerateGhosts() {
+        yield return new WaitForSeconds(3f);
+        
+        for (int i = 0; i < 2; i++) {
+            PhotonNetwork.Instantiate("Ghost", Vector3.zero, Quaternion.identity);
         }
     }
 }

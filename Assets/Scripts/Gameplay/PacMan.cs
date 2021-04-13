@@ -83,6 +83,14 @@ public class PacMan : MonoBehaviour {
         }
     }
 
+    public void TouchedGhost() {
+        if (!photonView.IsMine) { return; }
+
+        Vector2 newPos = new Vector2(0f, -4f);
+        transform.position = newPos.ToXZ();
+        movePosition = newPos;
+    }
+
     public void AtePellet() {
         photonView.RPC("UpdatePelletCount", RpcTarget.All);
     }
