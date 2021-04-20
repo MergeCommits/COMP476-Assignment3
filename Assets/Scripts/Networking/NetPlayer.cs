@@ -56,7 +56,7 @@ public class NetPlayer : TestPUN {
     }
 
     private static IEnumerator GenerateGhosts() {
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(10f);
         
         for (int i = 0; i < 2; i++) {
             PhotonNetwork.Instantiate("Ghost", Vector3.zero, Quaternion.identity);
